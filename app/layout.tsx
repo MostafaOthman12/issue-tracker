@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           radius="medium"
         >
           <NavBar />
-          <main>{children}</main>
+          <main className="p-3">{children}</main>
         </Theme>
       </body>
     </html>
