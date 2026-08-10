@@ -1,18 +1,13 @@
 import "@radix-ui/themes/styles.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./NavBar";
 import { Theme, ThemePanel } from "@radix-ui/themes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -22,19 +17,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <Theme
-          accentColor="violet"
-          appearance="dark"
-          panelBackground="solid"
-          radius="medium"
-        >
+    <html lang="en" className=" h-full antialiased">
+      <body className={`${inter.className} min-h-full flex flex-col`}>
+        <Theme accentColor="violet" appearance="light" radius="medium">
           <NavBar />
-          <main className="p-3">{children}</main>
+          <main className="p-4">{children}</main>
         </Theme>
       </body>
     </html>
