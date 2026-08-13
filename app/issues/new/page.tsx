@@ -1,6 +1,6 @@
 "use client";
-import { Button, Callout, Heading, TextField } from "@radix-ui/themes";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Button, Callout, Heading, Spinner, TextField } from "@radix-ui/themes";
+import { BookmarkIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -86,7 +86,12 @@ const NewIssue = () => {
               </Callout.Text>
             </Callout.Root>
           )}
-          <Button type="submit">Submit New Issue</Button>
+          <Button disabled={formState.isSubmitting}>
+            <Spinner loading={formState.isSubmitting}>
+              <BookmarkIcon />
+            </Spinner>
+            Submit New Issue
+          </Button>
         </div>
       </form>
     </div>
