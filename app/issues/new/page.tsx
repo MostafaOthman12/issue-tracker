@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
@@ -20,7 +21,9 @@ const issueFormSchema = z.object({
 type IssueForm = z.infer<typeof issueFormSchema>;
 
 const NewIssue = () => {
-  const { register, control, handleSubmit } = useForm<IssueForm>();
+  const { register, control, handleSubmit, formState } = useForm<IssueForm>({
+    resolver: zodResolver(issueFormSchema),
+  });
   const [error, setError] = useState(false);
   const router = useRouter();
 
@@ -40,12 +43,12 @@ const NewIssue = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="max-w-xl">
       <Heading as="h2" align="center" className="mb-5">
         Create New Issue
       </Heading>
       {error && (
-        <Callout.Root className="mb-3">
+        <Callout.Root className="mb-3" color="red">
           <Callout.Icon>
             <InfoCircledIcon />
           </Callout.Icon>
@@ -54,18 +57,39 @@ const NewIssue = () => {
           </Callout.Text>
         </Callout.Root>
       )}
-      <div className="space-y-3 max-w-xl">
-        <TextField.Root {...register("title")} placeholder="Title" />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <SimpleMDE placeholder="Description" {...field} />
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-3 max-w-xl">
+          <TextField.Root {...register("title")} placeholder="Title" />
+          {formState.errors.title && (
+            <Callout.Root className="mb-3" color="red">
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text>{formState.errors.title?.message}</Callout.Text>
+            </Callout.Root>
           )}
-        />
-        <Button type="submit">Submit</Button>
-      </div>
-    </form>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <SimpleMDE placeholder="Description" {...field} />
+            )}
+          />
+          {formState.errors.description && (
+            <Callout.Root className="mb-3" color="red">
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text>
+                {formState.errors.description?.message}
+              </Callout.Text>
+            </Callout.Root>
+          )}
+          <Button type="submit">Submit New Issue</Button>
+        </div>
+      </form>
+    </div>
   );
 };
 
