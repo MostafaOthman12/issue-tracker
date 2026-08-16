@@ -87,10 +87,16 @@ const NewIssue = () => {
             </Callout.Root>
           )}
           <Button disabled={formState.isSubmitting}>
-            <Spinner loading={formState.isSubmitting}>
-              <BookmarkIcon />
-            </Spinner>
-            Submit New Issue
+            {formState.isSubmitting ? (
+              <Spinner loading={formState.isSubmitting}>
+                <BookmarkIcon />
+              </Spinner>
+            ) : (
+              <>
+                <BookmarkIcon />
+                Submit New Issue
+              </>
+            )}
           </Button>
         </div>
       </form>
