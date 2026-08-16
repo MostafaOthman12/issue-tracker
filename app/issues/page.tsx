@@ -33,7 +33,9 @@ const Issues = async () => {
         <Table.Body>
           {issues.map((issue: Issue) => (
             <Table.Row key={issue.id}>
-              <Table.Cell>{issue.title}</Table.Cell>
+              <Table.Cell>
+                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+              </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
                 {issue.description}
               </Table.Cell>
