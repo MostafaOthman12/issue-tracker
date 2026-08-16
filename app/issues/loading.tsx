@@ -1,18 +1,13 @@
-import { Badge, Button, Table } from "@radix-ui/themes";
+import { Button, Table } from "@radix-ui/themes";
 import Link from "next/link";
-import { Issue } from "../generated/prisma/client";
-import { issueStatusBadge } from "../components/issueStatusBadge";
-import delay from "delay";
-const Issues = async () => {
-  await delay(5000);
-  const issues: Issue[] = await fetch("http://localhost:3000/api/issues")
-    .then((res) => res.json())
-    .catch((e) => console.log(e));
-  console.log(issues);
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+const LoadingIssuesPage = () => {
   return (
     <>
       <div className="mb-5">
-        <Button>
+        <Button loading={true}>
           <Link href="issues/new">Create Issue</Link>
         </Button>
       </div>
@@ -31,17 +26,19 @@ const Issues = async () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {issues.map((issue: Issue) => (
-            <Table.Row key={issue.id}>
-              <Table.Cell>{issue.title}</Table.Cell>
+          {Array.from({ length: 7 }).map((_, index) => (
+            <Table.Row key={index}>
+              <Table.Cell>
+                <Skeleton />
+              </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                {issue.description}
+                <Skeleton />
               </Table.Cell>
               <Table.Cell className=" hidden md:table-cell">
-                {issueStatusBadge(issue.status)}
+                <Skeleton />
               </Table.Cell>
               <Table.Cell className=" hidden md:table-cell">
-                {issue.createdAt.toString()}
+                <Skeleton />
               </Table.Cell>
             </Table.Row>
           ))}
@@ -51,4 +48,4 @@ const Issues = async () => {
   );
 };
 
-export default Issues;
+export default LoadingIssuesPage;
