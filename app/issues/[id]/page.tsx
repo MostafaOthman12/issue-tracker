@@ -2,7 +2,7 @@ import prisma from "@/app/db/prisma";
 import { issueStatusBadge } from "@/app/components/issueStatusBadge";
 import { Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
-import React from "react";
+import ReactMarkdown from "react-markdown";
 import EditIssueButton from "./EditIssueButton";
 import DeleteIssueButton from "./DeleteIssueButton";
 import delay from "delay";
@@ -36,7 +36,7 @@ const IssueDetailPage = async ({ params }: Props) => {
           </Text>
         </Flex>
         <Card className="prose max-w-full">
-          <Text as="p">{issue.description}</Text>
+          <ReactMarkdown>{issue.description}</ReactMarkdown>
         </Card>
       </div>
 

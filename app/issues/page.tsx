@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Issue } from "../generated/prisma/client";
 import { issueStatusBadge } from "../components/issueStatusBadge";
 import delay from "delay";
+import ReactMarkdown from "react-markdown";
 const Issues = async () => {
   await delay(5000);
   const issues: Issue[] = await fetch("http://localhost:3000/api/issues")
@@ -37,7 +38,7 @@ const Issues = async () => {
                 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                {issue.description}
+                <ReactMarkdown>{issue.description}</ReactMarkdown>
               </Table.Cell>
               <Table.Cell className=" hidden md:table-cell">
                 {issueStatusBadge(issue.status)}
