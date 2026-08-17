@@ -12,8 +12,6 @@ const updateIssueSchema = z.object({
   status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]).optional(),
 });
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
 function parseId(id: string) {
   const parsed = parseInt(id);
   return isNaN(parsed) ? null : parsed;
@@ -22,8 +20,6 @@ function parseId(id: string) {
 function errorResponse(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
-
-// ─── GET /api/issues/:id ─────────────────────────────────────────────────────
 
 export async function GET(_request: NextRequest, { params }: Props) {
   const { id } = await params;
@@ -42,8 +38,6 @@ export async function GET(_request: NextRequest, { params }: Props) {
   return NextResponse.json(issue, { status: 200 });
 }
 
-// ─── PATCH /api/issues/:id ────────────────────────────────────────────────────
-
 export async function PATCH(request: NextRequest, { params }: Props) {
   const { id } = await params;
   const issueId = parseId(id);
@@ -58,7 +52,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
   if (!validation.success) {
     return NextResponse.json(
       { error: "Validation failed", details: validation.error.issues },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -77,8 +71,6 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 
   return NextResponse.json(updatedIssue, { status: 200 });
 }
-
-// ─── DELETE /api/issues/:id ───────────────────────────────────────────────────
 
 export async function DELETE(_request: NextRequest, { params }: Props) {
   const { id } = await params;

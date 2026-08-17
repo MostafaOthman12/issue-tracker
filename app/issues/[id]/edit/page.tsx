@@ -1,33 +1,10 @@
 "use client";
 
-import { BookmarkIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import {
-  Button,
-  Callout,
-  Heading,
-  Select,
-  Spinner,
-  TextField,
-} from "@radix-ui/themes";
+import { Callout, Heading } from "@radix-ui/themes";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import dynamic from "next/dynamic";
-import "easymde/dist/easymde.min.css";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
-  ssr: false,
-});
-
-const editIssueSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]),
-});
-
-type EditIssueForm = z.infer<typeof editIssueSchema>;
+import IssueForm, { IssueFormData } from "@/app/components/IssueForm";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -37,11 +14,9 @@ const EditIssuePage = ({ params }: Props) => {
   const router = useRouter();
   const [error, setError] = useState(false);
   const [issueId, setIssueId] = useState<number | null>(null);
-
-  const { register, control, handleSubmit, reset, formState } =
-    useForm<EditIssueForm>({
-      resolver: zodResolver(editIssueSchema),
-    });
+  const [defaultValues, setDefaultValues] = useState<
+    Partial<IssueFormData> | undefined
+  >(undefined);
 
   useEffect(() => {
     params.then(({ id }) => {
@@ -50,16 +25,16 @@ const EditIssuePage = ({ params }: Props) => {
       fetch(`/api/issues/${numId}`)
         .then((res) => res.json())
         .then((issue) => {
-          reset({
+          setDefaultValues({
             title: issue.title,
             description: issue.description,
             status: issue.status,
           });
         });
     });
-  }, [params, reset]);
+  }, [params]);
 
-  const onSubmit: SubmitHandler<EditIssueForm> = async (data) => {
+  const onSubmit = async (data: IssueFormData) => {
     setError(false);
     const res = await fetch(`/api/issues/${issueId}`, {
       method: "PATCH",
@@ -89,65 +64,14 @@ const EditIssuePage = ({ params }: Props) => {
         </Callout.Root>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-3">
-          <TextField.Root {...register("title")} placeholder="Title" />
-          {formState.errors.title && (
-            <Callout.Root color="red">
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>{formState.errors.title.message}</Callout.Text>
-            </Callout.Root>
-          )}
-
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <SimpleMDE placeholder="Description" {...field} />
-            )}
-          />
-          {formState.errors.description && (
-            <Callout.Root color="red">
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>
-                {formState.errors.description.message}
-              </Callout.Text>
-            </Callout.Root>
-          )}
-
-          <Controller
-            name="status"
-            control={control}
-            render={({ field }) => (
-              <Select.Root value={field.value} onValueChange={field.onChange}>
-                <Select.Trigger placeholder="Status" />
-                <Select.Content>
-                  <Select.Item value="OPEN">Open</Select.Item>
-                  <Select.Item value="IN_PROGRESS">In Progress</Select.Item>
-                  <Select.Item value="CLOSED">Closed</Select.Item>
-                </Select.Content>
-              </Select.Root>
-            )}
-          />
-
-          <Button disabled={formState.isSubmitting}>
-            {formState.isSubmitting ? (
-              <Spinner loading>
-                <BookmarkIcon />
-              </Spinner>
-            ) : (
-              <>
-                <BookmarkIcon />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </div>
-      </form>
+      {defaultValues && (
+        <IssueForm
+          defaultValues={defaultValues}
+          onSubmit={onSubmit}
+          submitLabel="Save Changes"
+          showStatus
+        />
+      )}
     </div>
   );
 };
