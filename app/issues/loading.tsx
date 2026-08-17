@@ -1,5 +1,5 @@
 import { Button, Table } from "@radix-ui/themes";
-import Link from "../components/links";
+import Link from "@/app/components/links";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 const LoadingIssuesPage = () => {

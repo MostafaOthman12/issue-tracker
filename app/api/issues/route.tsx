@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import prisma from "../../db/prisma";
-import { Status } from "../../generated/prisma/enums";
+import prisma from "@/app/db/prisma";
+import { Status } from "@/app/generated/prisma/enums";
 
 const createIssueSchema = z.object({
   title: z.string().min(1).max(255),

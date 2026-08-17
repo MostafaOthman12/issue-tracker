@@ -11,11 +11,18 @@ interface Props {
 
 const EditIssueButton = ({ issueId, loading }: Props) => {
   return (
-    <Button variant="soft" loading={loading} asChild>
-      <Link href={`/issues/${issueId}/edit`}>
-        <Pencil1Icon />
-        Edit Issue
-      </Link>
+    <Button variant="soft" loading={loading} asChild={!loading}>
+      {loading ? (
+        <>
+          <Pencil1Icon />
+          Edit Issue
+        </>
+      ) : (
+        <Link href={`/issues/${issueId}/edit`}>
+          <Pencil1Icon />
+          Edit Issue
+        </Link>
+      )}
     </Button>
   );
 };

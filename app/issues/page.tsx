@@ -1,12 +1,10 @@
 import { Badge, Button, Table } from "@radix-ui/themes";
 import NextLink from "next/link";
-import Link from "../components/links";
-import { Issue } from "../generated/prisma/client";
-import { issueStatusBadge } from "../components/issueStatusBadge";
-import delay from "delay";
+import Link from "@/app/components/links";
+import { Issue } from "@/app/generated/prisma/client";
+import { issueStatusBadge } from "@/app/components/issueStatusBadge";
 import ReactMarkdown from "react-markdown";
 const Issues = async () => {
-  await delay(5000);
   const issues: Issue[] = await fetch("http://localhost:3000/api/issues")
     .then((res) => res.json())
     .catch((e) => console.log(e));

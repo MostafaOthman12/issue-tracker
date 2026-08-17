@@ -13,7 +13,6 @@ interface Props {
 
 const IssueDetailPage = async ({ params }: Props) => {
   const { id } = await params;
-  await delay(5000);
   const issueId = parseInt(id);
   if (isNaN(issueId)) {
     notFound();
