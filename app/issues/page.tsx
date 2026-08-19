@@ -9,8 +9,11 @@ export const dynamic = "force-dynamic";
 
 const Issues = async () => {
   const issues: Issue[] = await fetch("http://localhost:3000/api/issues")
-    .then((res) => res.json())
-    .catch((e) => console.log(e));
+    .then((res) => {
+      if (!res.ok) throw new Error(`Failed to fetch issues: ${res.status}`);
+      return res.json();
+    })
+    .catch((e) => { console.error(e); return []; });
   return (
     <>
       <div className="mb-5">

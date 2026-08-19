@@ -2,8 +2,7 @@
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { FaBug } from "react-icons/fa6";
-import { Box, Button, Flex, Link, Separator, Text } from "@radix-ui/themes";
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Box, Flex, Link, Separator, Text } from "@radix-ui/themes";
 
 const NavBar = () => {
   const links = [
@@ -56,7 +55,7 @@ const NavBar = () => {
             </NextLink>
           </Link>
 
-          {/* Nav links + Auth */}
+          {/* Nav links */}
           <Flex
             as="ul"
             align="center"
@@ -109,42 +108,6 @@ const NavBar = () => {
             {/* Separator */}
             <Box mx="2">
               <Separator orientation="vertical" size="1" />
-            </Box>
-
-            {/* Auth */}
-            <Box as="li">
-              <Flex align="center" gap="2">
-                <Show when="signed-out">
-                  <SignInButton>
-                    <Button
-                      variant="ghost"
-                      color="gray"
-                      size="2"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Sign In
-                    </Button>
-                  </SignInButton>
-                  <SignUpButton>
-                    <Button
-                      variant="solid"
-                      color="violet"
-                      size="2"
-                      radius="medium"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Sign Up
-                    </Button>
-                  </SignUpButton>
-                </Show>
-                <Show when="signed-in">
-                  <UserButton
-                    appearance={{
-                      elements: { avatarBox: "w-8 h-8 ring-2 ring-violet-200" },
-                    }}
-                  />
-                </Show>
-              </Flex>
             </Box>
           </Flex>
         </Flex>

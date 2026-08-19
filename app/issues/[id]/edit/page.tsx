@@ -23,14 +23,18 @@ const EditIssuePage = ({ params }: Props) => {
       const numId = parseInt(id);
       setIssueId(numId);
       fetch(`/api/issues/${numId}`)
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) throw new Error(`Failed to fetch issue: ${res.status}`);
+          return res.json();
+        })
         .then((issue) => {
           setDefaultValues({
             title: issue.title,
             description: issue.description,
             status: issue.status,
           });
-        });
+        })
+        .catch((e) => { console.error(e); setError(true); });
     });
   }, [params]);
 
