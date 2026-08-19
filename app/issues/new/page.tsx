@@ -16,6 +16,7 @@ const NewIssue = () => {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
     });
     if (res.ok) {
       router.push("/issues");
@@ -35,7 +36,9 @@ const NewIssue = () => {
           <Callout.Icon>
             <InfoCircledIcon />
           </Callout.Icon>
-          <Callout.Text>Something went wrong. Please try again later.</Callout.Text>
+          <Callout.Text>
+            Something went wrong. Please try again later.
+          </Callout.Text>
         </Callout.Root>
       )}
 

@@ -40,6 +40,7 @@ const EditIssuePage = ({ params }: Props) => {
       method: "PATCH",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
     });
     if (res.ok) {
       router.push(`/issues/${issueId}`);
