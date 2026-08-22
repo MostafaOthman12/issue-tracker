@@ -3,6 +3,7 @@ import { Select } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "next-auth";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   issueId: number;
@@ -11,22 +12,22 @@ interface Props {
 
 const AssigneeSelect = ({ issueId, assignedToUserId }: Props) => {
   const router = useRouter();
+  const {
+    data: users,
+    isLoading,
+    error,
+  } = useQuery<User[], Error>({
+    queryKey: ["users"],
+    queryFn: () => fetch(`/api/users`).then((res) => res.json()),
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    retry: 1,
+    retryDelay: 1000,
+    refetchInterval: false,
+  });
   const [assigneeId, setAssigneeId] = useState("");
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const res = await fetch(`/api/users`);
-        setUsers(await res.json());
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-        setLoading(false);
-      }
-    }
-    fetchUsers();
-  }, []);
+
   const handleSubmit = async (value: string) => {
     setAssigneeId(value);
     const res = await fetch(`/api/issues/${issueId}`, {
@@ -51,12 +52,14 @@ const AssigneeSelect = ({ issueId, assignedToUserId }: Props) => {
       <Select.Content>
         <Select.Group>
           <Select.Item value="unassigned">Unassigned</Select.Item>
-          {loading ? (
+          {isLoading ? (
             <Select.Item value="loading">Loading...</Select.Item>
+          ) : error ? (
+            <Select.Item value="error">Error</Select.Item>
           ) : (
-            users.map((user) => (
-              <Select.Item key={user.id} value={user?.id!}>
-                {user.name}
+            users?.map((user: User) => (
+              <Select.Item key={user?.id || ""} value={user?.id || ""}>
+                {user?.name}
               </Select.Item>
             ))
           )}
