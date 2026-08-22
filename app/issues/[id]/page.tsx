@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import EditIssueButton from "./EditIssueButton";
 import DeleteIssueButton from "./DeleteIssueButton";
-import delay from "delay";
+import AssigneeSelect from "@/app/components/AssigneeSelect";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -13,6 +13,7 @@ interface Props {
 
 const IssueDetailPage = async ({ params }: Props) => {
   const { id } = await params;
+
   const issueId = parseInt(id);
   if (isNaN(issueId)) {
     notFound();
@@ -41,6 +42,10 @@ const IssueDetailPage = async ({ params }: Props) => {
 
       {/* Actions sidebar */}
       <Flex direction="column" gap="3">
+        <AssigneeSelect
+          issueId={issue.id}
+          assignedToUserId={issue.assignedToUserId}
+        />
         <EditIssueButton issueId={issue.id} />
         <DeleteIssueButton issueId={issue.id} />
       </Flex>
