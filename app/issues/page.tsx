@@ -1,9 +1,10 @@
-import { Button, Table, Text } from "@radix-ui/themes";
+import { Button, Flex, Table, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
 import Link from "@/app/components/links";
 import { Issue } from "@/app/generated/prisma/client";
 import { issueStatusBadge } from "@/app/components/issueStatusBadge";
 import ReactMarkdown from "react-markdown";
+import IssuesStatuesFilter from "@/app/components/IssuesStatuesFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -13,14 +14,18 @@ const Issues = async () => {
       if (!res.ok) throw new Error(`Failed to fetch issues: ${res.status}`);
       return res.json();
     })
-    .catch((e) => { console.error(e); return []; });
+    .catch((e) => {
+      console.error(e);
+      return [];
+    });
   return (
     <>
-      <div className="mb-5">
+      <Flex justify="between" className="mb-5">
         <Button asChild>
           <NextLink href="issues/new">Create Issue</NextLink>
         </Button>
-      </div>
+        <IssuesStatuesFilter />
+      </Flex>
 
       <Table.Root variant="surface">
         <Table.Header>
