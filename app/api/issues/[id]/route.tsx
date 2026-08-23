@@ -10,7 +10,7 @@ const updateIssueSchema = z.object({
   title: z.string().min(1).max(255).optional(),
   description: z.string().min(1).optional(),
   status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]).optional(),
-  assignedToUserId: z.string().optional(),
+  assignedToUserId: z.string().nullable().optional(),
 });
 
 function parseId(id: string) {

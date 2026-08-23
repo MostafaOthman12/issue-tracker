@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "next-auth";
 import { useQuery } from "@tanstack/react-query";
-
+import toast, { Toaster } from "react-hot-toast";
 interface Props {
   issueId: number;
   assignedToUserId: string | null;
@@ -38,34 +38,46 @@ const AssigneeSelect = ({ issueId, assignedToUserId }: Props) => {
       body: JSON.stringify({
         assignedToUserId: value === "unassigned" ? null : value,
       }),
-    });
-    if (res.ok) {
-      router.refresh();
-    }
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to update issue");
+        } else {
+          toast.success("Success!");
+          router.refresh();
+        }
+      })
+      .catch((e) => {
+        toast.error("Something went wrong!");
+      });
   };
-  useEffect(() => {
-    setAssigneeId(assignedToUserId || "unassigned");
-  }, [assignedToUserId]);
+
   return (
-    <Select.Root value={assigneeId} onValueChange={handleSubmit}>
-      <Select.Trigger />
-      <Select.Content>
-        <Select.Group>
-          <Select.Item value="unassigned">Unassigned</Select.Item>
-          {isLoading ? (
-            <Select.Item value="loading">Loading...</Select.Item>
-          ) : error ? (
-            <Select.Item value="error">Error</Select.Item>
-          ) : (
-            users?.map((user: User) => (
-              <Select.Item key={user?.id || ""} value={user?.id || ""}>
-                {user?.name}
-              </Select.Item>
-            ))
-          )}
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+    <>
+      <Select.Root
+        defaultValue={assignedToUserId || "unassigned"}
+        onValueChange={handleSubmit}
+      >
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Group>
+            <Select.Item value="unassigned">Unassigned</Select.Item>
+            {isLoading ? (
+              <Select.Item value="loading">Loading...</Select.Item>
+            ) : error ? (
+              <Select.Item value="error">Error</Select.Item>
+            ) : (
+              users?.map((user: User) => (
+                <Select.Item key={user?.id || ""} value={user?.id || ""}>
+                  {user?.name}
+                </Select.Item>
+              ))
+            )}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+      <Toaster />
+    </>
   );
 };
 
