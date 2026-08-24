@@ -1,11 +1,19 @@
 "use client";
 import { Select } from "@radix-ui/themes";
-import React from "react";
-
+import { useRouter } from "next/navigation";
+import { Status } from "@/app/generated/prisma/enums";
+import { useState } from "react";
 const IssuesStatuesFilter = () => {
-  const [status, setStatus] = React.useState<string>("all");
+  const [status, setStatus] = useState<string>("all");
+  const router = useRouter();
   const handleValueChange = (value: string) => {
-    setStatus(value);
+    if (value === "all") {
+      setStatus("all");
+      router.push(`/issues`);
+    } else {
+      setStatus(value);
+      router.push(`/issues?status=${value}`);
+    }
   };
   return (
     <Select.Root defaultValue="all" onValueChange={handleValueChange}>
@@ -13,9 +21,11 @@ const IssuesStatuesFilter = () => {
       <Select.Content>
         <Select.Group>
           <Select.Item value="all">All</Select.Item>
-          <Select.Item value="open">OPEN</Select.Item>
-          <Select.Item value="in_progress">IN PROGRESS</Select.Item>
-          <Select.Item value="closed">CLOSED</Select.Item>
+          {Object.values(Status).map((s) => (
+            <Select.Item key={s} value={s}>
+              {s}
+            </Select.Item>
+          ))}
         </Select.Group>
       </Select.Content>
     </Select.Root>

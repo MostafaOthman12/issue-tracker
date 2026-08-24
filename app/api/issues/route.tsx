@@ -12,21 +12,37 @@ const createIssueSchema = z.object({
 // Supports optional ?status=OPEN|IN_PROGRESS|CLOSED query param
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const statusParam = searchParams.get("status");
-
+  const statusParam = request.nextUrl.searchParams.get("status");
+  const sortParam = request.nextUrl.searchParams.get("sort");
+  const orderParam = request.nextUrl.searchParams.get("order");
+  const pageParam = request.nextUrl.searchParams.get("page");
   const validStatuses: Status[] = ["OPEN", "IN_PROGRESS", "CLOSED"];
+  const sortFields: string[] = ["title", "description", "status", "createdAt"];
+  const pageSize = 10;
   const status =
     statusParam && validStatuses.includes(statusParam as Status)
       ? (statusParam as Status)
       : undefined;
 
+  const sort =
+    sortParam && sortFields.includes(sortParam) ? sortParam : "createdAt";
+
+  const order: "asc" | "desc" = orderParam === "asc" ? "asc" : "desc";
+  const page = pageParam ? parseInt(pageParam) : 1;
   const issues = await prisma.issue.findMany({
     where: status ? { status } : undefined,
-    orderBy: { createdAt: "desc" },
+    orderBy: { [sort]: order },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+  const totalIssueCount = await prisma.issue.count({
+    where: status ? { status } : undefined,
   });
 
-  return NextResponse.json(issues, { status: 200 });
+  return NextResponse.json(
+    { issues, issueCount: totalIssueCount },
+    { status: 200 },
+  );
 }
 
 // ─── POST /api/issues ─────────────────────────────────────────────────────────
@@ -38,7 +54,7 @@ export async function POST(request: NextRequest) {
   if (!validation.success) {
     return NextResponse.json(
       { error: "Validation failed", details: validation.error.issues },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

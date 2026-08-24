@@ -5,18 +5,55 @@ import { Issue } from "@/app/generated/prisma/client";
 import { issueStatusBadge } from "@/app/components/issueStatusBadge";
 import ReactMarkdown from "react-markdown";
 import IssuesStatuesFilter from "@/app/components/IssuesStatuesFilter";
+import { ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
+import { Pagination } from "../components/Pagination";
 
 export const dynamic = "force-dynamic";
 
-const Issues = async () => {
-  const issues: Issue[] = await fetch("http://localhost:3000/api/issues")
+interface Props {
+  searchParams: Promise<{
+    status: string;
+    sort: string;
+    order: string;
+    page: string;
+  }>;
+}
+const Issues = async ({ searchParams }: Props) => {
+  const { status, sort, order, page } = await searchParams;
+  const url = new URL("http://localhost:3000/api/issues");
+  if (status && status !== "all") url.searchParams.set("status", status);
+  if (sort) url.searchParams.set("sort", sort);
+  if (order) url.searchParams.set("order", order);
+  if (page) url.searchParams.set("page", page);
+
+  const sortHref = (col: string) => {
+    const isSameCol = sort === col;
+    const nextOrder = isSameCol && order === "asc" ? "desc" : "asc";
+    const params = new URLSearchParams();
+    params.set("sort", col);
+    params.set("order", nextOrder);
+    if (status && status !== "all") params.set("status", status);
+    if (page) params.set("page", page);
+    return `?${params}`;
+  };
+
+  const arrow = (col: string) =>
+    sort === col ? (
+      order === "desc" ? (
+        <ArrowDownIcon className="inline ml-1" />
+      ) : (
+        <ArrowUpIcon className="inline ml-1" />
+      )
+    ) : null;
+
+  const { issues, issueCount } = await fetch(url.toString())
     .then((res) => {
       if (!res.ok) throw new Error(`Failed to fetch issues: ${res.status}`);
       return res.json();
     })
     .catch((e) => {
       console.error(e);
-      return [];
+      return { issues: [], issueCount: 0 };
     });
   return (
     <>
@@ -30,15 +67,21 @@ const Issues = async () => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Description
+            <Table.ColumnHeaderCell>
+              <Link href={sortHref("title")}>Title{arrow("title")}</Link>
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Status
+              <Link href={sortHref("description")}>
+                Description{arrow("description")}
+              </Link>
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Created At
+              <Link href={sortHref("status")}>Status{arrow("status")}</Link>
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              <Link href={sortHref("createdAt")}>
+                Created At{arrow("createdAt")}
+              </Link>
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
@@ -82,6 +125,11 @@ const Issues = async () => {
           )}
         </Table.Body>
       </Table.Root>
+      <Pagination
+        pageSize={10}
+        itemCount={issueCount}
+        currentPage={parseInt(page) || 1}
+      />
     </>
   );
 };
