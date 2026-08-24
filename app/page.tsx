@@ -3,6 +3,7 @@ import LatestIssues from "./components/LatestIssues";
 import IssueSummary from "./components/IssusSummary";
 import IssueChart from "./components/IssueChart";
 import prisma from "./db/prisma";
+import { Metadata } from "next";
 
 export default async function Home() {
   const [open, inProgress, closed] = await Promise.all([
@@ -15,7 +16,9 @@ export default async function Home() {
     <Box maxWidth="960px" mx="auto">
       {/* ── Page header ── */}
       <Box mb="6">
-        <Heading size="6" mb="1">Dashboard</Heading>
+        <Heading size="6" mb="1">
+          Dashboard
+        </Heading>
         <Text color="gray" size="2">
           A quick overview of your project's issue activity.
         </Text>
@@ -29,7 +32,9 @@ export default async function Home() {
       {/* ── Chart + Latest issues ── */}
       <Grid columns={{ initial: "1", md: "2" }} gap="5">
         <Card>
-          <Heading size="3" mb="4">Issues by Status</Heading>
+          <Heading size="3" mb="4">
+            Issues by Status
+          </Heading>
           <IssueChart open={open} inProgress={inProgress} closed={closed} />
         </Card>
 
@@ -38,3 +43,7 @@ export default async function Home() {
     </Box>
   );
 }
+export const metadata: Metadata = {
+  title: "Issue Tracker - Dashboard",
+  description: "View a summary of all issues and their status",
+};

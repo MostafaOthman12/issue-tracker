@@ -14,6 +14,7 @@ import ReactMarkdown from "react-markdown";
 import EditIssueButton from "./EditIssueButton";
 import DeleteIssueButton from "./DeleteIssueButton";
 import AssigneeSelect from "@/app/components/AssigneeSelect";
+import { Metadata } from "next";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -81,3 +82,12 @@ const IssueDetailPage = async ({ params }: Props) => {
 };
 
 export default IssueDetailPage;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const issueId = parseInt(id);
+  const issue = await prisma.issue.findUnique({ where: { id: issueId } });
+  return {
+    title: issue?.title || "Issue Tracker - Issue Detail",
+    description: `View issue ${issue?.id} - ${issue?.title}`,
+  };
+}

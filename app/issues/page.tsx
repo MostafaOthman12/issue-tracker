@@ -15,6 +15,7 @@ import IssuesStatuesFilter from "@/app/components/IssuesStatuesFilter";
 import { ArrowUpIcon, ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import IssueStatusBadge from "../components/issueStatusBadge";
 import { Pagination } from "../components/Pagination";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -165,3 +166,7 @@ const Issues = async ({ searchParams }: Props) => {
 };
 
 export default Issues;
+export const metadata: Metadata = {
+  title: "Issue Tracker - Issues",
+  description: "View all issues and their status",
+};
