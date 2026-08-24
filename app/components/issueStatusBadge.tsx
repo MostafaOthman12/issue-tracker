@@ -2,7 +2,10 @@ import { Badge, Flex } from "@radix-ui/themes";
 import React from "react";
 import { Status } from "../generated/prisma/enums";
 
-export const issueStatusBadge = (status: Status) => {
+interface Props {
+  status: Status;
+}
+const IssueStatusBadge = ({ status }: Props) => {
   return (
     <Flex gap="2">
       {status === "OPEN" && <Badge color="red">{status}</Badge>}
@@ -11,3 +14,4 @@ export const issueStatusBadge = (status: Status) => {
     </Flex>
   );
 };
+export default IssueStatusBadge;

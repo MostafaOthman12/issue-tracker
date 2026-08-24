@@ -2,11 +2,10 @@ import { Button, Flex, Table, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
 import Link from "@/app/components/links";
 import { Issue } from "@/app/generated/prisma/client";
-import { issueStatusBadge } from "@/app/components/issueStatusBadge";
 import ReactMarkdown from "react-markdown";
 import IssuesStatuesFilter from "@/app/components/IssuesStatuesFilter";
 import { ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
-import { Pagination } from "../components/Pagination";
+import IssueStatusBadge from "../components/issueStatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +96,7 @@ const Issues = async ({ searchParams }: Props) => {
                     <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                     {/* Status badge visible only on mobile */}
                     <div className="md:hidden">
-                      {issueStatusBadge(issue.status)}
+                      <IssueStatusBadge status={issue.status} />
                     </div>
                   </div>
                 </Table.Cell>
@@ -105,7 +104,7 @@ const Issues = async ({ searchParams }: Props) => {
                   <ReactMarkdown>{issue.description}</ReactMarkdown>
                 </Table.Cell>
                 <Table.Cell className="hidden md:table-cell">
-                  {issueStatusBadge(issue.status)}
+                  <IssueStatusBadge status={issue.status} />
                 </Table.Cell>
                 <Table.Cell className="hidden md:table-cell text-sm text-(--gray-11) whitespace-nowrap">
                   {new Date(issue.createdAt).toLocaleDateString("en-US", {
@@ -125,11 +124,6 @@ const Issues = async ({ searchParams }: Props) => {
           )}
         </Table.Body>
       </Table.Root>
-      <Pagination
-        pageSize={10}
-        itemCount={issueCount}
-        currentPage={parseInt(page) || 1}
-      />
     </>
   );
 };
