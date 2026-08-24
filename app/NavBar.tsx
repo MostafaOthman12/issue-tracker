@@ -41,8 +41,8 @@ const NavBar = () => {
             borderRadius: "var(--radius-3)",
             fontSize: "var(--font-size-2)",
             fontWeight: 500,
-            color: isActive ? "var(--mint-11)" : "var(--gray-11)",
-            background: isActive ? "var(--mint-a3)" : "transparent",
+            color: isActive ? "var(--violet-11)" : "var(--gray-11)",
+            background: isActive ? "var(--violet-a3)" : "transparent",
             transition: "background 150ms, color 150ms",
           }}
         >
@@ -57,7 +57,7 @@ const NavBar = () => {
               height="2px"
               style={{
                 borderRadius: "var(--radius-full)",
-                background: "var(--mint-9)",
+                background: "var(--violet-9)",
               }}
             />
           )}
@@ -127,14 +127,14 @@ const NavBar = () => {
       )
     ) : mobile ? (
       <Box py="1">
-        <Button asChild variant="soft" color="mint" size="2">
+        <Button asChild variant="soft" color="violet" size="2">
           <NextLink href="/api/auth/signin" onClick={() => setMenuOpen(false)}>
             Sign in
           </NextLink>
         </Button>
       </Box>
     ) : (
-      <Button asChild variant="soft" color="mint" size="1">
+      <Button asChild variant="soft" color="violet" size="1">
         <NextLink href="/api/auth/signin">Sign in</NextLink>
       </Button>
     );
@@ -168,10 +168,10 @@ const NavBar = () => {
                   style={{
                     borderRadius: "var(--radius-3)",
                     background:
-                      "linear-gradient(135deg, var(--mint-9), var(--mint-9))",
+                      "linear-gradient(135deg, var(--violet-9), var(--violet-9))",
                     color: "white",
                     fontSize: "14px",
-                    boxShadow: "0 2px 8px var(--mint-a5)",
+                    boxShadow: "0 2px 8px var(--violet-a5)",
                   }}
                 >
                   <FaBug />
