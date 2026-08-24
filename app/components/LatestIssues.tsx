@@ -1,4 +1,13 @@
-import { Avatar, Box, Button, Card, Flex, Heading, Separator, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Separator,
+  Text,
+} from "@radix-ui/themes";
 import { Issue, User } from "@/app/generated/prisma/client";
 import NextLink from "next/link";
 import IssueStatusBadge from "@/app/components/issueStatusBadge";
@@ -20,19 +29,27 @@ const LatestIssues = async () => {
       <Separator size="4" mb="3" />
 
       {issues.length === 0 ? (
-        <Text color="gray" size="2">No issues yet.</Text>
+        <Text color="gray" size="2">
+          No issues yet.
+        </Text>
       ) : (
         <Flex direction="column" gap="1">
           {issues.map((issue, i) => (
             <Box key={issue.id}>
-              <NextLink href={`/issues/${issue.id}`} style={{ textDecoration: "none" }}>
+              <NextLink
+                href={`/issues/${issue.id}`}
+                style={{ textDecoration: "none" }}
+              >
                 <Flex
                   align="center"
                   gap="3"
                   py="2"
                   px="1"
-                  style={{ borderRadius: "var(--radius-2)", transition: "background 150ms" }}
-                  className="hover:bg-[var(--accent-a2)]"
+                  style={{
+                    borderRadius: "var(--radius-2)",
+                    transition: "background 150ms",
+                  }}
+                  className="hover:bg-(--accent-a2)"
                 >
                   {/* Status dot */}
                   <Box
@@ -42,14 +59,21 @@ const LatestIssues = async () => {
                       height: 8,
                       borderRadius: "50%",
                       background:
-                        issue.status === "OPEN" ? "var(--red-9)"
-                        : issue.status === "IN_PROGRESS" ? "var(--orange-9)"
-                        : "var(--green-9)",
+                        issue.status === "OPEN"
+                          ? "var(--red-9)"
+                          : issue.status === "IN_PROGRESS"
+                            ? "var(--orange-9)"
+                            : "var(--green-9)",
                     }}
                   />
 
                   {/* Title + badge */}
-                  <Flex direction="column" gap="1" flexGrow="1" style={{ minWidth: 0 }}>
+                  <Flex
+                    direction="column"
+                    gap="1"
+                    flexGrow="1"
+                    style={{ minWidth: 0 }}
+                  >
                     <Text
                       size="2"
                       weight="medium"
@@ -77,7 +101,9 @@ const LatestIssues = async () => {
                   ) : (
                     <Box
                       style={{
-                        width: 20, height: 20, flexShrink: 0,
+                        width: 20,
+                        height: 20,
+                        flexShrink: 0,
                         borderRadius: "50%",
                         border: "1.5px dashed var(--gray-a7)",
                       }}
