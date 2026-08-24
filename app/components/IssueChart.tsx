@@ -19,15 +19,15 @@ interface Props {
 
 const IssueChart = ({ open, inProgress, closed }: Props) => {
   const data = [
-    { label: "Open", count: open, color: "var(--red-9)" },
-    { label: "In Progress", count: inProgress, color: "var(--orange-9)" },
-    { label: "Closed", count: closed, color: "var(--green-9)" },
+    { label: "Open",        count: open,        color: "var(--red-9)"    },
+    { label: "In Progress", count: inProgress,  color: "var(--orange-9)" },
+    { label: "Closed",      count: closed,       color: "var(--green-9)"  },
   ];
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} barSize={50}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--gray-a5)" />
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={data} barSize={44}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--gray-a4)" />
         <XAxis
           dataKey="label"
           axisLine={false}
@@ -39,6 +39,7 @@ const IssueChart = ({ open, inProgress, closed }: Props) => {
           axisLine={false}
           tickLine={false}
           tick={{ fill: "var(--gray-11)", fontSize: 12 }}
+          width={28}
         />
         <Tooltip
           cursor={{ fill: "var(--gray-a3)" }}

@@ -1,6 +1,12 @@
 import prisma from "@/app/db/prisma";
-import { Card, Flex, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Text } from "@radix-ui/themes";
 import NextLink from "next/link";
+
+const statConfig = [
+  { label: "Open Issues",       status: "OPEN",        color: "var(--red-9)"    },
+  { label: "In Progress",       status: "IN_PROGRESS", color: "var(--orange-9)" },
+  { label: "Closed Issues",     status: "CLOSED",      color: "var(--green-9)"  },
+] as const;
 
 const IssueSummary = async () => {
   const [open, inProgress, closed] = await Promise.all([
@@ -9,27 +15,23 @@ const IssueSummary = async () => {
     prisma.issue.count({ where: { status: "CLOSED" } }),
   ]);
 
-  const statuses = [
-    { label: "Open Issues", count: open, status: "OPEN" },
-    { label: "In Progress Issues", count: inProgress, status: "IN_PROGRESS" },
-    { label: "Closed Issues", count: closed, status: "CLOSED" },
-  ];
+  const counts = [open, inProgress, closed];
 
   return (
     <Flex gap="4">
-      {statuses.map(({ label, count, status }) => (
-        <Card key={status} style={{ flex: 1 }}>
-          <Flex direction="column" gap="1">
-            <NextLink
-              href={`/issues?status=${status}`}
-              style={{ fontSize: "var(--font-size-2)", textDecoration: "none", color: "var(--gray-11)" }}
-            >
-              {label}
-            </NextLink>
-            <Text size="7" weight="bold">
-              {count}
-            </Text>
-          </Flex>
+      {statConfig.map(({ label, status, color }, i) => (
+        <Card key={status} style={{ flex: 1, borderLeft: `3px solid ${color}` }}>
+          <NextLink
+            href={`/issues?status=${status}`}
+            style={{ textDecoration: "none" }}
+          >
+            <Flex direction="column" gap="1">
+              <Text size="2" color="gray">{label}</Text>
+              <Text size="8" weight="bold" style={{ color }}>
+                {counts[i]}
+              </Text>
+            </Flex>
+          </NextLink>
         </Card>
       ))}
     </Flex>

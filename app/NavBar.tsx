@@ -18,7 +18,7 @@ import {
 import { useSession } from "next-auth/react";
 
 const links = [
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "Dashboard", href: "/" },
   { label: "Issues", href: "/issues" },
 ];
 

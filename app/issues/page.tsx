@@ -1,11 +1,20 @@
-import { Button, Flex, Table, Text } from "@radix-ui/themes";
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Separator,
+  Text,
+} from "@radix-ui/themes";
 import NextLink from "next/link";
 import Link from "@/app/components/links";
 import { Issue } from "@/app/generated/prisma/client";
-import ReactMarkdown from "react-markdown";
 import IssuesStatuesFilter from "@/app/components/IssuesStatuesFilter";
-import { ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
+import { ArrowUpIcon, ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import IssueStatusBadge from "../components/issueStatusBadge";
+import { Pagination } from "../components/Pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +26,7 @@ interface Props {
     page: string;
   }>;
 }
+
 const Issues = async ({ searchParams }: Props) => {
   const { status, sort, order, page } = await searchParams;
   const url = new URL("http://localhost:3000/api/issues");
@@ -54,77 +64,103 @@ const Issues = async ({ searchParams }: Props) => {
       console.error(e);
       return { issues: [], issueCount: 0 };
     });
+
   return (
-    <>
-      <Flex justify="between" className="mb-5">
-        <Button asChild>
-          <NextLink href="issues/new">Create Issue</NextLink>
-        </Button>
-        <IssuesStatuesFilter />
+    <Box maxWidth="860px" mx="auto">
+      {/* ── Toolbar ── */}
+      <Flex align="center" justify="between" mb="5">
+        <Flex align="center" gap="3">
+          <Heading size="5">Issues</Heading>
+          <Badge color="gray" variant="soft" radius="full">
+            {issueCount}
+          </Badge>
+        </Flex>
+        <Flex align="center" gap="3">
+          <IssuesStatuesFilter />
+          <Button asChild>
+            <NextLink href="issues/new">
+              <PlusIcon />
+              New Issue
+            </NextLink>
+          </Button>
+        </Flex>
       </Flex>
 
-      <Table.Root variant="surface">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>
-              <Link href={sortHref("title")}>Title{arrow("title")}</Link>
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              <Link href={sortHref("description")}>
-                Description{arrow("description")}
-              </Link>
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              <Link href={sortHref("status")}>Status{arrow("status")}</Link>
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              <Link href={sortHref("createdAt")}>
-                Created At{arrow("createdAt")}
-              </Link>
-            </Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {issues ? (
-            issues.map((issue: Issue) => (
-              <Table.Row
-                key={issue.id}
-                className="hover:bg-(--accent-2) transition-colors duration-150"
+      {/* ── Sort bar (desktop only) ── */}
+      <Flex gap="4" mb="2" px="3" className="hidden md:flex">
+        <Text size="1" color="gray" weight="medium" style={{ flex: 2 }}>
+          <Link href={sortHref("title")}>Title {arrow("title")}</Link>
+        </Text>
+        <Text size="1" color="gray" weight="medium" style={{ flex: 1 }}>
+          <Link href={sortHref("status")}>Status {arrow("status")}</Link>
+        </Text>
+        <Text size="1" color="gray" weight="medium" style={{ flex: 1 }}>
+          <Link href={sortHref("createdAt")}>Created {arrow("createdAt")}</Link>
+        </Text>
+      </Flex>
+
+      {/* ── Issue cards ── */}
+      {issues && issues.length > 0 ? (
+        <Flex direction="column" gap="2">
+          {issues.map((issue: Issue) => (
+            <Card key={issue.id} asChild>
+              <NextLink
+                href={`/issues/${issue.id}`}
+                style={{ textDecoration: "none" }}
               >
-                <Table.Cell>
-                  <div className="flex flex-col gap-1">
-                    <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-                    {/* Status badge visible only on mobile */}
-                    <div className="md:hidden">
-                      <IssueStatusBadge status={issue.status} />
-                    </div>
-                  </div>
-                </Table.Cell>
-                <Table.Cell className="hidden md:table-cell max-w-xs">
-                  <ReactMarkdown>{issue.description}</ReactMarkdown>
-                </Table.Cell>
-                <Table.Cell className="hidden md:table-cell">
-                  <IssueStatusBadge status={issue.status} />
-                </Table.Cell>
-                <Table.Cell className="hidden md:table-cell text-sm text-(--gray-11) whitespace-nowrap">
-                  {new Date(issue.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Table.Cell>
-              </Table.Row>
-            ))
-          ) : (
-            <tr>
-              <Table.Cell align="center">
-                <Text color="red">No issues found</Text>
-              </Table.Cell>
-            </tr>
-          )}
-        </Table.Body>
-      </Table.Root>
-    </>
+                <Flex align="center" gap="4">
+                  <Box style={{ flex: 2, minWidth: 0 }}>
+                    <Text
+                      size="2"
+                      weight="medium"
+                      style={{
+                        color: "var(--gray-12)",
+                        display: "block",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {issue.title}
+                    </Text>
+                  </Box>
+
+                  <Box style={{ flex: 1 }} className="hidden md:block">
+                    <IssueStatusBadge status={issue.status} />
+                  </Box>
+
+                  <Box style={{ flex: 1 }} className="hidden md:block">
+                    <Text
+                      size="2"
+                      color="gray"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      {new Date(issue.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </Text>
+                  </Box>
+                </Flex>
+              </NextLink>
+            </Card>
+          ))}
+        </Flex>
+      ) : (
+        <Card>
+          <Text color="gray" size="2">
+            No issues found.
+          </Text>
+        </Card>
+      )}
+
+      <Pagination
+        currentPage={parseInt(page || "1")}
+        itemCount={issueCount}
+        pageSize={10}
+      />
+    </Box>
   );
 };
 

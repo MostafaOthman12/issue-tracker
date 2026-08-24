@@ -27,9 +27,14 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-full flex flex-col`}>
         <ReactQuery>
           <SessionProvider>
-            <Theme accentColor="violet" appearance="light" radius="medium">
+            <Theme
+              accentColor="violet"
+              appearance="light"
+              grayColor="slate"
+              radius="medium"
+            >
               <NavBar />
-              <main className="p-4">{children}</main>
+              <main className="p-6">{children}</main>
             </Theme>
           </SessionProvider>
         </ReactQuery>

@@ -1,4 +1,4 @@
-import { Box, Card, Flex, Grid, Heading } from "@radix-ui/themes";
+import { Box, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import LatestIssues from "./components/LatestIssues";
 import IssueSummary from "./components/IssusSummary";
 import IssueChart from "./components/IssueChart";
@@ -12,19 +12,29 @@ export default async function Home() {
   ]);
 
   return (
-    <Flex direction="column" gap="5" mx="auto" mt="6" style={{ maxWidth: "900px" }}>
-      <IssueSummary />
+    <Box maxWidth="960px" mx="auto">
+      {/* ── Page header ── */}
+      <Box mb="6">
+        <Heading size="6" mb="1">Dashboard</Heading>
+        <Text color="gray" size="2">
+          A quick overview of your project's issue activity.
+        </Text>
+      </Box>
 
+      {/* ── Summary cards ── */}
+      <Box mb="5">
+        <IssueSummary />
+      </Box>
+
+      {/* ── Chart + Latest issues ── */}
       <Grid columns={{ initial: "1", md: "2" }} gap="5">
         <Card>
           <Heading size="3" mb="4">Issues by Status</Heading>
           <IssueChart open={open} inProgress={inProgress} closed={closed} />
         </Card>
 
-        <Box>
-          <LatestIssues />
-        </Box>
+        <LatestIssues />
       </Grid>
-    </Flex>
+    </Box>
   );
 }
