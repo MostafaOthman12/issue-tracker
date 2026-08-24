@@ -1,19 +1,20 @@
 # 🐛 Issue Tracker
 
-A full-stack issue tracking application built with **Next.js 16**, **Prisma**, and **Radix UI**. Create, browse, filter, sort, and assign issues — all behind Google OAuth authentication.
+A full-stack issue tracking application built with **Next.js 16**, **Prisma**, and **Radix UI Themes**. Create, browse, filter, sort, assign, and manage issues — all behind Google OAuth authentication — with a polished dark-mode dashboard.
 
 ---
 
 ## ✨ Features
 
+- **Dashboard** — Overview with live status counts, a bar chart, and latest issues at a glance
 - **Issue Management** — Create, view, edit, and delete issues with Markdown support
-- **Status Tracking** — Three statuses: `OPEN`, `IN_PROGRESS`, `CLOSED`
-- **Assignee Support** — Assign issues to registered users
-- **Filtering & Sorting** — Filter by status; sort by title, description, status, or date
-- **Pagination** — Server-side pagination (10 issues per page)
-- **Google OAuth** — Secure sign-in via NextAuth.js with a Prisma adapter
-- **Responsive UI** — Mobile-friendly navbar with hamburger menu and desktop dropdown
-- **Dashboard** — Overview page for issue analytics
+- **Status Tracking** — `Open`, `In Progress`, `Closed` — color-coded throughout the UI
+- **Assignee Support** — Assign issues to any registered user via a live dropdown
+- **Filtering & Sorting** — Filter by status; sort by title, status, or date (asc/desc)
+- **Pagination** — Server-side pagination, 10 issues per page
+- **Google OAuth** — Secure sign-in via NextAuth.js v5 with Prisma adapter
+- **Responsive UI** — Mobile-friendly navbar with hamburger menu, desktop dropdown
+- **Dark Mode** — Full dark theme powered by Radix UI's built-in appearance system
 
 ---
 
@@ -23,16 +24,18 @@ A full-stack issue tracking application built with **Next.js 16**, **Prisma**, a
 |---|---|
 | Framework | [Next.js 16](https://nextjs.org/) (App Router) |
 | Language | TypeScript |
-| Database | MySQL (via Prisma + MariaDB adapter) |
-| ORM | [Prisma 7](https://www.prisma.io/) |
-| Auth | [NextAuth.js v5](https://authjs.dev/) — Google provider |
+| Database | MySQL / MariaDB |
+| ORM | [Prisma 7](https://www.prisma.io/) with Accelerate |
+| Auth | [NextAuth.js v5](https://authjs.dev/) — Google OAuth provider |
 | UI Library | [Radix UI Themes](https://www.radix-ui.com/themes) |
-| Styling | Tailwind CSS v4 |
+| Styling | Tailwind CSS v4 + custom prose styles |
+| Charts | [Recharts](https://recharts.org/) |
 | Forms | React Hook Form + Zod validation |
-| Editor | SimpleMDE (Markdown editor) |
+| Markdown Editor | SimpleMDE (`react-simplemde-editor`) |
+| Markdown Renderer | `react-markdown` |
 | Data Fetching | TanStack React Query |
-| Notifications | react-hot-toast |
-| Loading States | react-loading-skeleton |
+| Notifications | `react-hot-toast` |
+| Loading States | `react-loading-skeleton` |
 
 ---
 
@@ -42,28 +45,43 @@ A full-stack issue tracking application built with **Next.js 16**, **Prisma**, a
 issue-tracker/
 ├── app/
 │   ├── api/
-│   │   ├── issues/         # GET & POST /api/issues
-│   │   └── auth/           # NextAuth handlers
-│   ├── components/         # Shared UI components
-│   │   ├── AssigneeSelect.tsx
-│   │   ├── IssueForm.tsx
-│   │   ├── IssuesStatuesFilter.tsx
-│   │   ├── Pagination.tsx
-│   │   ├── issueStatusBadge.tsx
-│   │   └── links.tsx
-│   ├── dashboard/          # Dashboard overview page
-│   ├── db/                 # Prisma client singleton
-│   ├── generated/          # Prisma generated client
+│   │   ├── issues/
+│   │   │   ├── route.tsx          # GET (paginated, filterable) + POST /api/issues
+│   │   │   ├── latest/route.tsx   # GET /api/issues/latest (top 5 with assignee)
+│   │   │   └── [id]/route.tsx     # GET, PATCH, DELETE /api/issues/:id
+│   │   └── users/route.tsx        # GET /api/users (for assignee dropdown)
+│   ├── components/
+│   │   ├── AssigneeSelect.tsx     # User assignee dropdown (client, React Query)
+│   │   ├── IssueChart.tsx         # Bar chart by status (client, Recharts)
+│   │   ├── IssueForm.tsx          # Shared create/edit form (client, RHF + Zod)
+│   │   ├── IssuesStatuesFilter.tsx# Status filter dropdown (client)
+│   │   ├── IssusSummary.tsx       # Status count cards (server)
+│   │   ├── LatestIssues.tsx       # Latest 5 issues card (server)
+│   │   ├── Pagination.tsx         # Prev/next pagination (client)
+│   │   ├── issueStatusBadge.tsx   # Colored status badge
+│   │   ├── links.tsx              # Radix + Next.js link wrapper
+│   │   └── ReactQuery.tsx         # TanStack Query provider
+│   ├── dashboard/                 # (legacy route, NavBar points to /)
+│   ├── db/prisma.ts               # Prisma client singleton
+│   ├── generated/                 # Prisma generated client
 │   ├── issues/
-│   │   ├── [id]/           # Issue detail & edit page
-│   │   ├── new/            # Create issue page
-│   │   └── page.tsx        # Issues list page
-│   ├── NavBar.tsx          # Sticky responsive navbar
-│   └── layout.tsx          # Root layout
+│   │   ├── [id]/
+│   │   │   ├── edit/              # Edit issue page
+│   │   │   ├── DeleteIssueButton.tsx
+│   │   │   ├── EditIssueButton.tsx
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx           # Issue detail page
+│   │   ├── new/                   # Create issue page
+│   │   ├── loading.tsx            # Issues list skeleton
+│   │   └── page.tsx               # Issues list (card layout)
+│   ├── NavBar.tsx                 # Sticky responsive navbar
+│   ├── globals.css                # Tailwind + prose styles
+│   ├── layout.tsx                 # Root layout (dark Radix Theme)
+│   └── page.tsx                   # Dashboard home
 ├── prisma/
-│   └── schema.prisma       # Database schema
-├── auth.ts                 # NextAuth configuration
-└── .env                    # Environment variables
+│   └── schema.prisma              # Database schema
+├── auth.ts                        # NextAuth configuration
+└── .env                           # Environment variables
 ```
 
 ---
@@ -72,14 +90,12 @@ issue-tracker/
 
 | Model | Description |
 |---|---|
-| `Issue` | Core entity with title, description, status, and optional assignee |
-| `User` | Auth user linked to assigned issues |
+| `Issue` | Title, description, status (`OPEN / IN_PROGRESS / CLOSED`), optional assignee |
+| `User` | OAuth user; can be assigned to issues |
 | `Account` | OAuth provider accounts (NextAuth) |
 | `Session` | JWT sessions (NextAuth) |
 | `VerificationToken` | Email verification tokens |
-| `Authenticator` | WebAuthn support |
-
-**Issue statuses:** `OPEN` · `IN_PROGRESS` · `CLOSED`
+| `Authenticator` | WebAuthn credentials |
 
 ---
 
@@ -87,7 +103,7 @@ issue-tracker/
 
 ### Prerequisites
 
-- Node.js >= 18
+- Node.js ≥ 18
 - A running MySQL / MariaDB instance
 - A Google Cloud project with OAuth 2.0 credentials
 
@@ -143,7 +159,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `npm run build` | Build for production |
 | `npm run start` | Start the production server |
 | `npm run lint` | Run ESLint |
-| `npx prisma studio` | Open Prisma Studio (DB GUI) |
+| `npx prisma studio` | Open Prisma Studio (visual DB GUI) |
 | `npx prisma migrate dev` | Apply pending migrations |
 | `npx prisma generate` | Regenerate the Prisma client |
 
@@ -153,47 +169,58 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### `GET /api/issues`
 
-Fetch a paginated list of issues.
+Returns a paginated, filterable list of issues.
 
-| Query Param | Type | Description |
-|---|---|---|
-| `status` | `OPEN \| IN_PROGRESS \| CLOSED` | Filter by issue status |
-| `sort` | `title \| description \| status \| createdAt` | Sort field (default: `createdAt`) |
-| `order` | `asc \| desc` | Sort direction (default: `desc`) |
-| `page` | `number` | Page number (default: `1`, page size: `10`) |
+| Query Param | Type | Default | Description |
+|---|---|---|---|
+| `status` | `OPEN \| IN_PROGRESS \| CLOSED` | — | Filter by status |
+| `sort` | `title \| status \| createdAt` | `createdAt` | Sort field |
+| `order` | `asc \| desc` | `desc` | Sort direction |
+| `page` | `number` | `1` | Page number (10 per page) |
 
 **Response:**
 ```json
-{
-  "issues": [...],
-  "issueCount": 42
-}
+{ "issues": [...], "issueCount": 42 }
 ```
 
 ### `POST /api/issues`
 
 Create a new issue.
 
-**Request body:**
 ```json
-{
-  "title": "string (1-255 chars)",
-  "description": "string (min 1 char, Markdown supported)"
-}
+{ "title": "string (1–255 chars)", "description": "string (Markdown)" }
 ```
 
-**Response:** `201 Created` with the new issue object.
+**Response:** `201` with the created issue.
+
+### `PATCH /api/issues/:id`
+
+Update an issue's assignee or status.
+
+### `DELETE /api/issues/:id`
+
+Delete an issue by ID.
+
+### `GET /api/issues/latest`
+
+Returns the 5 most recent issues including their `assignedToUser`.
+
+### `GET /api/users`
+
+Returns all registered users (used by the assignee dropdown).
 
 ---
 
 ## 🔐 Authentication
 
-Authentication is handled by **NextAuth.js v5** using the **Google OAuth** provider. Sessions are stored as JWTs. The Prisma adapter persists user accounts and sessions to the database.
+Powered by **NextAuth.js v5** with the **Google OAuth** provider. Sessions are JWTs stored client-side; user accounts and sessions are persisted to the database via the Prisma adapter.
 
-- Sign in at `/api/auth/signin`
-- Sign out at `/api/auth/signout`
+| Route | Description |
+|---|---|
+| `/api/auth/signin` | Google sign-in page |
+| `/api/auth/signout` | Sign-out |
 
-Only authenticated users can create issues or be assigned to them.
+Only authenticated users can be assigned to issues. Issue creation requires authentication (enforced at the API level).
 
 ---
 
@@ -201,12 +228,12 @@ Only authenticated users can create issues or be assigned to them.
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feat/your-feature`
-3. Commit your changes: `git commit -m 'feat: add your feature'`
-4. Push to the branch: `git push origin feat/your-feature`
+3. Commit: `git commit -m 'feat: your change'`
+4. Push: `git push origin feat/your-feature`
 5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the [MIT License](LICENSE).
+MIT — see [LICENSE](LICENSE) for details.
