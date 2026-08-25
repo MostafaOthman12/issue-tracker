@@ -5,6 +5,8 @@ import IssueChart from "./components/IssueChart";
 import prisma from "./db/prisma";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [open, inProgress, closed] = await Promise.all([
     prisma.issue.count({ where: { status: "OPEN" } }),

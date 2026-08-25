@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Separator,
-  Text,
-} from "@radix-ui/themes";
+import { Avatar, Box, Button, Card, Flex, Heading, Separator, Text } from "@radix-ui/themes";
 import { Issue, User } from "@/app/generated/prisma/client";
 import NextLink from "next/link";
 import IssueStatusBadge from "@/app/components/issueStatusBadge";
