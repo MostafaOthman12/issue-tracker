@@ -30,7 +30,8 @@ interface Props {
 
 const Issues = async ({ searchParams }: Props) => {
   const { status, sort, order, page } = await searchParams;
-  const url = new URL("http://localhost:3000/api/issues");
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const url = new URL(`${baseUrl}/api/issues`);
   if (status && status !== "all") url.searchParams.set("status", status);
   if (sort) url.searchParams.set("sort", sort);
   if (order) url.searchParams.set("order", order);

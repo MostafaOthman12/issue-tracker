@@ -4,8 +4,9 @@ import NextLink from "next/link";
 import IssueStatusBadge from "@/app/components/issueStatusBadge";
 
 const LatestIssues = async () => {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const issues: ({ assignedToUser: User | null } & Issue)[] = await fetch(
-    "http://localhost:3000/api/issues/latest",
+    `${baseUrl}/api/issues/latest`,
   ).then((res) => res.json());
 
   return (
