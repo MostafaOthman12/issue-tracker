@@ -5,7 +5,7 @@ import NavBar from "@/app/NavBar";
 import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "next-auth/react";
 import ReactQuery from "./components/ReactQuery";
-
+import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: "Issue Tracker",
   description: "Issue Tracker",
@@ -18,7 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col" style={{ fontFamily: "Inter, 'Helvetica Neue', Arial, sans-serif" }}>
+      <body
+        className="min-h-full flex flex-col"
+        style={{ fontFamily: "Inter, 'Helvetica Neue', Arial, sans-serif" }}
+      >
         <ReactQuery>
           <SessionProvider>
             <Theme
