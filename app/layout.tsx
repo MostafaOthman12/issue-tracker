@@ -30,6 +30,7 @@ export default function RootLayout({
               grayColor="slate"
               radius="medium"
             >
+              <Analytics />
               <NavBar />
               <main className="p-6">{children}</main>
             </Theme>
